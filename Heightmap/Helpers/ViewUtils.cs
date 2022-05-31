@@ -6,8 +6,18 @@ using Heightmap.Classes;
 
 namespace Heightmap.Helpers
 {
+    /// <summary>
+    /// Třída obsahuje pomocné funkce pro zobrazení.
+    /// </summary>
     public class ViewUtils
     {
+        /// <summary>
+        /// Upraví matici velikosti obrazu.
+        /// </summary>
+        /// <param name="zoomIn"></param>
+        /// <param name="center"></param>
+        /// <param name="imgWindow"></param>
+        /// <param name="scaleSpeed"></param>
         public static void ZoomImage(bool zoomIn, Point center, Image imgWindow, float scaleSpeed)
         {            
             Matrix mat = imgWindow.RenderTransform.Value; 
@@ -27,6 +37,11 @@ namespace Heightmap.Helpers
             imgWindow.RenderTransform = mtf;
         }
 
+        /// <summary>
+        /// Z vstupních dat vytvoří Bitmapu.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
         public static BitmapSource CreateBitmap(HeightMapData data) 
         {
             PixelFormat pf = PixelFormats.Gray32Float;

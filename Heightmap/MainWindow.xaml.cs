@@ -41,7 +41,7 @@ namespace Heightmap
         // true pokud byl zadán střed kružnice
         public bool FirstPointSet { get; set; } = false;
 
-        // střed výběru relativní k mapě
+        // střed výběru relativní k souřadnicím
         private Point _selectCenterImg = new Point();
         public Point SelectCenterImg
         {
@@ -56,7 +56,11 @@ namespace Heightmap
             this.PreviewKeyDown += new KeyEventHandler(HandleEsc);
         }
        
-        //  Zoom
+        /// <summary>
+        /// Zachytí pohyb kolečka myši, zavolá funkci pro přiblížení.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MouseScrollImg(object sender, MouseWheelEventArgs e)
         {
             RemoveSelect();
@@ -64,11 +68,17 @@ namespace Heightmap
             ViewUtils.ZoomImage(zoomIn, e.GetPosition(ImageWindow), ImageWindow, scaleSpeedWheel);
         }
 
+        /// <summary>
+        /// První kliknutí vybere střed výběru a zruší předchozí výber.
+        /// Druhé kliknutí výběr druhého bodu, volání funkce pro ošetření vytváření bodu a kružnice.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void LeftClickImg(object sender, MouseButtonEventArgs e)
         {
             if (!FirstPointSet)
             {
-                SelectCenter = e.GetPosition(canvas);
+                SelectCenter = e.GetPosition(Canvas);
                 SelectCenterImg = e.GetPosition(ImageWindow);                
                 CenterX.Content = "X: " + Math.Round(SelectCenterImg.X, 2);
                 CenterY.Content = "Y: " + Math.Round(SelectCenterImg.Y, 2);
@@ -79,12 +89,17 @@ namespace Heightmap
             else 
             {
                 var pointInImage = ImgPointToDataPoint(e.GetPosition(ImageWindow));
-                SecondSelectSet(e.GetPosition(canvas),pointInImage);                
+                SecondSelectSet(e.GetPosition(Canvas),pointInImage);                
             }
 
             FirstPointSet = !FirstPointSet;
         }
 
+        /// <summary>
+        /// Uloží se pozice odkud se má obraz posouvat.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void RightClickImg(object sender, MouseButtonEventArgs e)
         {
             // odkud posouváme            
@@ -92,7 +107,13 @@ namespace Heightmap
             ImageWindow.CaptureMouse();            
         }
         
-        // Posouvání img a výpis hodnoty kurzoru
+        
+        /// <summary>
+        /// Při drižení pravého tlačítka posouvá výběrové elementy a obraz.
+        /// Jinak vypisuje na obrazovku informace o kurzoru.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MouseMoveImg(object sender, MouseEventArgs e)
         {
             // update pozice            
@@ -103,14 +124,14 @@ namespace Heightmap
                 Canvas.SetLeft(ImageWindow, Canvas.GetLeft(ImageWindow) - res.X);
                 Canvas.SetTop(ImageWindow, Canvas.GetTop(ImageWindow) - res.Y);
 
-                Canvas.SetLeft(circle, Canvas.GetLeft(circle) - res.X);
-                Canvas.SetTop(circle, Canvas.GetTop(circle) - res.Y);
+                Canvas.SetLeft(Circle, Canvas.GetLeft(Circle) - res.X);
+                Canvas.SetTop(Circle, Canvas.GetTop(Circle) - res.Y);
 
-                Canvas.SetLeft(crossCenter, Canvas.GetLeft(crossCenter) - res.X);
-                Canvas.SetTop(crossCenter, Canvas.GetTop(crossCenter) - res.Y);
+                Canvas.SetLeft(CrossCenter, Canvas.GetLeft(CrossCenter) - res.X);
+                Canvas.SetTop(CrossCenter, Canvas.GetTop(CrossCenter) - res.Y);
 
-                Canvas.SetLeft(crossOuter, Canvas.GetLeft(crossOuter) - res.X);
-                Canvas.SetTop(crossOuter, Canvas.GetTop(crossOuter) - res.Y);
+                Canvas.SetLeft(CrossOuter, Canvas.GetLeft(CrossOuter) - res.X);
+                Canvas.SetTop(CrossOuter, Canvas.GetTop(CrossOuter) - res.Y);
 
                 FirstPoint = mousePoint;
             }
@@ -132,12 +153,22 @@ namespace Heightmap
             }
         }
 
+        /// <summary>
+        /// Ukončení posouvání.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void RightUpImg(object sender, MouseButtonEventArgs e)
         {
             ImageWindow.ReleaseMouseCapture(); ;
         }
 
-        // načtení souboru
+        /// <summary>
+        /// Zruší výberové okno, otevře výběr souboru, jeho zpracování, 
+        /// vykreslení na obrazovku a zobrazení maximálních hodnot celé mapy.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void LoadDataButton_Click(object sender, RoutedEventArgs e)
         {
             RemoveSelect();
@@ -160,8 +191,8 @@ namespace Heightmap
                     MaxValues = Utils.GetMaxValue(Data.Data, false);
                     MinValues = Utils.GetMaxValue(Data.Data, true);                   
 
-                    listView1.ItemsSource = MaxValues;
-                    listView2.ItemsSource = MinValues;
+                    ListView1.ItemsSource = MaxValues;
+                    ListView2.ItemsSource = MinValues;
 
                 }
                 catch
@@ -182,6 +213,24 @@ namespace Heightmap
             }
         }
 
+        /// <summary>
+        /// Kontrola stisku ESC, zruší výběr.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void HandleEsc(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape)
+            {
+                RemoveSelect();
+            }
+        }
+
+        /// <summary>
+        /// Vypíše nápovědu pro uživatele
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void HelpButton_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show($"Tlačítkem \"Otevřít soubor\" nahrajte textový soubor.\n\n" +
@@ -197,49 +246,66 @@ namespace Heightmap
 
         #region UTILS
         
+        /// <summary>
+        /// Zobrazí střed výběru, resetuje okna hraničních hodnot.
+        /// </summary>
+        /// <param name="center"></param>
         private void CenterCircleSet(Point center)
         {
             // střed výběru
-            crossCenter.Stroke = brush;
-            Canvas.SetLeft(crossCenter, center.X);
-            Canvas.SetTop(crossCenter, center.Y);
+            CrossCenter.Stroke = brush;
+            Canvas.SetLeft(CrossCenter, center.X);
+            Canvas.SetTop(CrossCenter, center.Y);
 
             MaxValues.Clear();
             MinValues.Clear();
-            listView1.ItemsSource = MaxValues;
-            listView2.ItemsSource = MinValues;
+            ListView1.ItemsSource = MaxValues;
+            ListView2.ItemsSource = MinValues;
         }
 
-        // vykreslení kruhu
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="diameter"></param>
+        /// <param name="radiusImg"></param>
         private void SetCircle(int diameter, double radiusImg)
         {
-            circle.Stroke = brush;
-            circle.Width = diameter;
-            circle.Height = diameter;
+            Circle.Stroke = brush;
+            Circle.Width = diameter;
+            Circle.Height = diameter;
 
-            Canvas.SetLeft(circle, SelectCenter.X - circle.Width / 2);
-            Canvas.SetTop(circle, SelectCenter.Y - circle.Width / 2);
+            Canvas.SetLeft(Circle, SelectCenter.X - Circle.Width / 2);
+            Canvas.SetTop(Circle, SelectCenter.Y - Circle.Width / 2);
 
             circleRadius.Content = "Poloměr: " + Math.Round(radiusImg, 2); 
         }
 
+        /// <summary>
+        /// Vykreslí druhý bod výběru oblasti.
+        /// </summary>
+        /// <param name="point"></param>
         private void PointOnCircleDraw(Point point)
         {
-            crossOuter.Stroke = brush;
-            Canvas.SetLeft(crossOuter, point.X);
-            Canvas.SetTop(crossOuter, point.Y);
+            CrossOuter.Stroke = brush;
+            Canvas.SetLeft(CrossOuter, point.X);
+            Canvas.SetTop(CrossOuter, point.Y);
         }
 
+        /// <summary>
+        /// Vypočítá velikost kružnice pro vykreslení a pro získání hodnot.
+        /// Nechá vykreslit kružnici a bod na ní.
+        /// Získání hraničních hodnot.
+        /// </summary>
+        /// <param name="pointToDraw"></param>
+        /// <param name="pointCoord"></param>
         private void SecondSelectSet(Point pointToDraw, Point pointCoord)
         {
-            // kružnice výběru            
+            // poloměr kružnice výběru            
             var radiusToDraw = (int)Utils.CalculateDistance(SelectCenter, pointToDraw);
-            // průměr pro vykreslování
-            var diameterToDraw = radiusToDraw * 2;
             // poloměr pro výpočet souřadnic
             var radiusCoord = Utils.CalculateDistance(SelectCenterImg, pointCoord);
 
-            SetCircle(diameterToDraw, radiusCoord);
+            SetCircle(radiusToDraw*2, radiusCoord);
 
             // bod výběru
             PointOnCircleDraw(pointToDraw);
@@ -250,19 +316,28 @@ namespace Heightmap
             MinValues = Utils.GetMaxValue(dataInCircle, true);          
 
             // obnovení listview
-            listView1.ItemsSource = MaxValues;
-            listView2.ItemsSource = MinValues;
+            ListView1.ItemsSource = MaxValues;
+            ListView2.ItemsSource = MinValues;
         }
 
+        /// <summary>
+        /// Zneviditelní výběrové okno.
+        /// </summary>
         private void RemoveSelect()
         {
             // zneviditelnění výběru
-            circle.Stroke = null;
-            crossCenter.Stroke = null;
-            crossOuter.Stroke = null;
+            Circle.Stroke = null;
+            CrossCenter.Stroke = null;
+            CrossOuter.Stroke = null;
         }
 
-        // výpis informací o kurzoru              
+        /// <summary>
+        /// Převede souřadnice kurzoru na souřadnice relativní k měřítku a pozici mapy.
+        /// Vypíše hodnotu v daném bodě.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="val"></param>
         private void UpdateInfo(double x, double y, int val)
         {
             LabelX.Content = "X: " + Math.Round(Data.Xllcorner + x * Data.Cellsize,2);
@@ -270,12 +345,19 @@ namespace Heightmap
             LabelVal.Content = "Hodnota: " + val;
         }
 
+        /// <summary>
+        /// Nastavení pozice obrazu na základní hodnoty.
+        /// </summary>
         private void ResetPosition() 
         {
             Canvas.SetLeft(ImageWindow, 10);
             Canvas.SetTop(ImageWindow, 10);
         }
 
+        /// <summary>
+        /// Obnovení původního roztažení obrazu,
+        /// obraz je následně roztažen v závislosti na velikosti dat na standardní velikost.
+        /// </summary>
         private void NormalizeScale()
         {
             ImageWindow.RenderTransform = DefaultTransform;
@@ -286,23 +368,23 @@ namespace Heightmap
             ViewUtils.ZoomImage(true, new Point(0, 0), ImageWindow, scaleSpeed);
         }
 
+        /// <summary>
+        /// Překlopení souřadnice y, aby měla správnou orientaci.
+        /// </summary>
+        /// <param name="imgCoords"></param>
+        /// <returns></returns>
         private Point ImgPointToDataPoint(Point imgCoords)
         {
             return new Point(imgCoords.X, Data.Nrows - imgCoords.Y);
         }
 
+        /// <summary>
+        /// Uloží původní nastavení velikosti okna.
+        /// </summary>
         private void StoreScale() {
             Matrix mat = ImageWindow.RenderTransform.Value;
             DefaultTransform = new MatrixTransform(mat);
-        }
-
-        private void HandleEsc(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Escape)
-            {
-                RemoveSelect();
-            }
-        }
+        }        
         #endregion
     }
 }

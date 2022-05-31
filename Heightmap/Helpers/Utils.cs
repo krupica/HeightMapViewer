@@ -6,8 +6,17 @@ using System.Windows;
 
 namespace Heightmap.Helpers
 {
+    /// <summary>
+    /// Třída obsahuje pomocné funkce.
+    /// </summary>
     internal class Utils
     {
+        /// <summary>
+        /// Bezpečně převede textovou hodnotu na celé číslo.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public static int StrToInt(string s)
         {           
             if (int.TryParse(s, out int number))
@@ -18,6 +27,12 @@ namespace Heightmap.Helpers
             throw new Exception("Expected int value, got : \"" + s + "\" ");            
         }
 
+        /// <summary>
+        /// Bezpečně převede textovou hodnotu na desetiné číslo
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public static float StrToFloat(string s)
         {       
             if (float.TryParse(s, out float number))
@@ -28,6 +43,13 @@ namespace Heightmap.Helpers
             throw new Exception("Expected float value, got : \"" + s + "\" ");
         }
 
+        /// <summary>
+        /// Porovná textové hodnoty.
+        /// </summary>
+        /// <param name="actual"></param>
+        /// <param name="expected"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public static bool CompareStr(string actual, string expected)
         {
             if (expected == actual.ToLower())
@@ -38,6 +60,12 @@ namespace Heightmap.Helpers
             throw new Exception("Expected String: \"" + expected + "\", actual : {1}\"" + actual + "\"");
         }
 
+        /// <summary>
+        /// Výpočet vzdálenosti mezi body.
+        /// </summary>
+        /// <param name="point1"></param>
+        /// <param name="point2"></param>
+        /// <returns></returns>
         public static double CalculateDistance(Point point1, Point point2)
         {
             var dx = point1.X - point2.X;
@@ -48,6 +76,12 @@ namespace Heightmap.Helpers
             return distance;
         }
 
+        /// <summary>
+        /// Vrátí List obsahující 10 hraničních hodnot.
+        /// </summary>
+        /// <param name="coordsInCircle"></param>
+        /// <param name="min"></param>
+        /// <returns></returns>
         public static List<Coordinate> GetMaxValue(List<Coordinate> coordsInCircle, bool min)
         {
             if (min)

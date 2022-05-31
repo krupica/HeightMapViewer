@@ -6,8 +6,17 @@ using System.Windows;
 
 namespace Heightmap.Helpers
 {
+    /// <summary>
+    /// Třída zpracovává vstup.
+    /// </summary>
     internal class Parser
     {
+        /// <summary>
+        /// Přečte soubor a nahraje data do struktury.
+        /// </summary>
+        /// <param name="mapData"></param>
+        /// <param name="fileName"></param>
+        /// <exception cref="Exception"></exception>
         public static void ParseFile(HeightMapData mapData, string fileName)
         {
             if (mapData == null)
@@ -64,6 +73,13 @@ namespace Heightmap.Helpers
             mapData.Data = coordData;
         }
 
+        /// <summary>
+        /// Zpracování jednoho řádku dat.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="line"></param>
+        /// <param name="ncols"></param>
+        /// <param name="row"></param>
         private static void ParseDataRow(List<Coordinate> data, string[] line, int ncols, int row) 
         {
             for (int j = 0; j < ncols; j++)

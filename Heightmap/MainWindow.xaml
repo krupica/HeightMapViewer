@@ -22,7 +22,7 @@
 
         </Grid.ColumnDefinitions>
 
-        <Canvas x:Name="canvas"
+        <Canvas x:Name="Canvas"
                 Background="LightYellow" Grid.RowSpan="2" Grid.ColumnSpan="3"
                 
                 >
@@ -37,13 +37,13 @@
                    />
 
             <Ellipse   
-                x:Name="circle"             
+                x:Name="Circle"             
             Height="80"  
             Width="80"  
             StrokeThickness="1"              
             />
 
-            <Path x:Name="crossCenter" StrokeThickness="1" >
+            <Path x:Name="CrossCenter" StrokeThickness="1" >
                 <Path.Data>
                     <GeometryGroup>
                         <LineGeometry StartPoint="0,-5" EndPoint="0,5"  />
@@ -52,7 +52,7 @@
                 </Path.Data>
             </Path>
 
-            <Path x:Name="crossOuter" StrokeThickness="1" >
+            <Path x:Name="CrossOuter" StrokeThickness="1" >
                 <Path.Data>
                     <GeometryGroup>
                         <LineGeometry StartPoint="0,-5" EndPoint="0,5"  />
@@ -77,7 +77,7 @@
 
 
 
-        <ListView x:Name="listView1" Grid.Column="3" Grid.Row="0" d:ItemsSource="{Binding MaxValues}"
+        <ListView x:Name="ListView1" Grid.Column="3" Grid.Row="0" d:ItemsSource="{Binding MaxValues}"
                    HorizontalAlignment="Stretch"
                   VerticalAlignment="Stretch"
                   >
@@ -95,7 +95,7 @@
         </ListView>
 
 
-        <ListView x:Name="listView2" Grid.Column="3" Grid.Row="1" d:ItemsSource="{Binding MinValues}"
+        <ListView x:Name="ListView2" Grid.Column="3" Grid.Row="1" d:ItemsSource="{Binding MinValues}"
                    HorizontalAlignment="Stretch"
                   VerticalAlignment="Stretch"
                   >
